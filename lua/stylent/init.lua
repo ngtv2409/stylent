@@ -20,7 +20,7 @@ hl(0, "StylentBoldItalic", { bold = true, italic = true })
 hl(0, "StylentLink", { link = "Underlined" })
 hl(0, "StylentCode", { fg = "#d19a66" })
 
-M.config = {
+M.opts = {
     patterns = {
         {"%*%*.-%*%*", "StylentBold"}
     }
@@ -30,9 +30,9 @@ local function has_parser()
     local ok, parser = pcall(vim.treesitter.get_parser, 0)
     return ok and parser ~= nil
 end
-M.setup = function(config)
-    if config then
-        M.config = config
+M.setup = function(opts)
+    if opts then
+        M.opts = opts
     end
     events = { "BufReadPost", "BufWritePost", "TextChanged", "TextChangedI" }
     local group = vim.api.nvim_create_augroup("StylentHighlight", { clear = true })
@@ -42,7 +42,7 @@ M.setup = function(config)
             pattern = "*",
             callback = function()
                 if has_parser() then
-                    hi.do_style(M.config.patterns)
+                    hi.do_style(M.opts.patterns)
                 end
             end
         })
