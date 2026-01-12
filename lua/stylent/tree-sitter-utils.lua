@@ -1,21 +1,29 @@
 local M = {}
-M.db = {}
+local ts = vim.treesitter
 
-local ts =  vim.treesitter
-
--- Get comments in the current buffer as ts nodes
 function M.get_comments()
-    local parser = ts.get_parser(0)
-    local tree = parser:parse()[1]
+    local ok, parser = pcall(ts.get_parser, 0)
+    if not ok or not parser then
+        return {} -- no parser, return empty
+    end
+
+    local tree_ok, tree = pcall(function() return parser:parse()[1] end)
+    if not tree_ok or not tree then
+        return {} -- parse failed
+    end
+
     local root = tree:root()
     local lang = parser:lang()
 
-    local query = ts.query.parse(
-        lang,
-        [[(comment) @comment]]
-    )
-    local comments = {}
+    local query
+    local query_ok, q = pcall(ts.query.parse, lang, [[(comment) @comment]])
+    if query_ok then
+        query = q
+    else
+        return {} -- query failed, no comments
+    end
 
+    local comments = {}
     for id, node in query:iter_captures(root, 0) do
         local capture_name = query.captures[id]
         if capture_name == "comment" then
@@ -27,25 +35,12 @@ function M.get_comments()
                 start_col = start_col,
                 end_row = end_row,
                 end_col = end_col,
-                node = node  -- keep the original Tree-sitter node for advanced use
+                node = node
             })
         end
     end
+
     return comments
-end
-
-M.db.debug_comment = function (comment)
-    print("Comment:", comment.text)
-    print("Type:", comment.type)
-    print("Start:", comment.start_row, comment.start_col)
-    print("End:", comment.end_row, comment.end_col)
-end
-
-M.db.debug_comments = function (comments)
-    for _, comment in ipairs(comments) do
-        M.db.debug_comment(comment)
-        print("---")  -- separator between comments
-    end
 end
 
 return M
