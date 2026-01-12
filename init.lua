@@ -10,4 +10,45 @@ M._tsutils = tsu
 M._match = match
 M.hi = hi
 
+local hl = vim.api.nvim_set_hl
+
+
+-- # Basic builtin markup to use
+-- Headings
+-- **im**
+hl(0, "StylentHeading1", { link = "Title" })
+hl(0, "StylentHeading2", { link = "Title" })
+
+-- Text styles
+hl(0, "StylentBold", { bold = true })
+hl(0, "StylentItalic", { italic = true })
+hl(0, "StylentBoldItalic", { bold = true, italic = true })
+
+-- Links and inline code
+hl(0, "StylentLink", { link = "Underlined" })
+hl(0, "StylentCode", { fg = "#d19a66" })
+
+M.config = {
+    patterns = {
+        {"%*%*.-%*%*", "StylentBold"}
+    }
+}
+
+M.setup = function(config)
+    if config then
+        M.config = config
+    end
+    events = { "BufReadPost", "BufWritePost", "TextChanged", "TextChangedI" }
+    local group = vim.api.nvim_create_augroup("StylentHighlight", { clear = true })
+    for _, event in ipairs(events) do
+        vim.api.nvim_create_autocmd(event, {
+            group = group,
+            pattern = "*",
+            callback = function()
+                M.hi.do_style(M.config.patterns)
+            end
+        })
+    end
+end
+
 return M
