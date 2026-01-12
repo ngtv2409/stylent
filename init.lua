@@ -1,14 +1,7 @@
 -- init.lua
 local M = {}
 
-local tsu = require("tree-sitter-utils")
-local match = require("match")
-
 local hi = require("highlight")
-
-M._tsutils = tsu
-M._match = match
-M.hi = hi
 
 local hl = vim.api.nvim_set_hl
 
@@ -49,7 +42,7 @@ M.setup = function(config)
             pattern = "*",
             callback = function()
                 if has_parser() then
-                    M.hi.do_style(M.config.patterns)
+                    hi.do_style(M.config.patterns)
                 end
             end
         })

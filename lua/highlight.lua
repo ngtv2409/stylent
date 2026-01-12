@@ -4,7 +4,8 @@ local M = {}
 -- Match the patterns and apply styling on the current buffer
 -- patterns: (string, highlight group)
 function M.do_style(patterns)
-    local st = require("stylent")
+    local tsutils = require("tree-sitter-utils")
+    local match = require("match")
 
     local bufnr = 0
     -- Create a namespace if it doesn't exist yet
@@ -12,14 +13,14 @@ function M.do_style(patterns)
     -- Clear previous highlights in this buffer for our namespace
     vim.api.nvim_buf_clear_namespace(bufnr, M.ns, 0, -1)
 
-    local cs = st._tsutils.get_comments()
+    local cs = tsutils.get_comments()
 
     for i = 1, #cs do
         local c = cs[i]
 
         for _, p in ipairs(patterns) do
             local pattern, hl_group = p[1], p[2]
-            local matches = st._match.match_one(pattern, c.text)
+            local matches = match.match_one(pattern, c.text)
 
             for j = 1, #matches do
                 local m = matches[j]
