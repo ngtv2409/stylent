@@ -1,8 +1,11 @@
 -- init.lua
 local M = {}
+M._internal = {}
 
-local internal = require("tree-sitter-utils")
+local tsu = require("tree-sitter-utils")
+local match = require("match")
 
-M._internal = internal
+M._internal.tsutils = tsu
+M._internal.match = match
 
 return M
