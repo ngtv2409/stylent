@@ -1,7 +1,7 @@
 -- init.lua
 local M = {}
 
-local hi = require("highlight")
+local hi = require("stylent.highlight")
 
 local hl = vim.api.nvim_set_hl
 

@@ -4,8 +4,8 @@ local M = {}
 -- Match the patterns and apply styling on the current buffer
 -- patterns: (string, highlight group)
 function M.do_style(patterns)
-    local tsutils = require("tree-sitter-utils")
-    local match = require("match")
+    local tsutils = require("stylent.tree-sitter-utils")
+    local match = require("stylent.match")
 
     local bufnr = 0
     -- Create a namespace if it doesn't exist yet
