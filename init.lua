@@ -15,7 +15,6 @@ local hl = vim.api.nvim_set_hl
 
 -- # Basic builtin markup to use
 -- Headings
--- **im**
 hl(0, "StylentHeading1", { link = "Title" })
 hl(0, "StylentHeading2", { link = "Title" })
 
@@ -34,6 +33,10 @@ M.config = {
     }
 }
 
+local function has_parser()
+    local ok, parser = pcall(vim.treesitter.get_parser, 0)
+    return ok and parser ~= nil
+end
 M.setup = function(config)
     if config then
         M.config = config
@@ -45,7 +48,9 @@ M.setup = function(config)
             group = group,
             pattern = "*",
             callback = function()
-                M.hi.do_style(M.config.patterns)
+                if has_parser() then
+                    M.hi.do_style(M.config.patterns)
+                end
             end
         })
     end
